@@ -32,22 +32,25 @@ public class BootStrap {
         Socket clientSocket=null;
         BufferedReader br=null;
         try {
-            System.out.println("获取系统端口号");
             int port = ServerParser.getPort();
-            System.out.println("端口号:"+port);
+            System.out.println("获取系统端口号:"+port);
             serverSocket = new ServerSocket(port);
-            //开始监听网络，此时程序处于等待状态，等待客户端的信息
-             clientSocket= serverSocket.accept();
-             br=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String temp=null;
-            while ((temp =br.readLine())!=null){
-                System.out.println(temp);
+            while (true) {
+                //开始监听网络，此时程序处于等待状态，等待客户端的信息
+                clientSocket= serverSocket.accept();
+/*                br=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                String temp=null;
+                while ((temp =br.readLine())!=null){
+                    System.out.println(temp);
+                }*/
+                new Thread(new HandlerRequest(clientSocket)).start();  //开启一个线程
+
             }
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
             //关闭资源
-            if (br!=null) {
+/*            if (br!=null) {
                 try {
                     br.close();
                 } catch (IOException e) {
@@ -60,7 +63,7 @@ public class BootStrap {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
             if (serverSocket!=null){
                 try {
                     serverSocket.close();

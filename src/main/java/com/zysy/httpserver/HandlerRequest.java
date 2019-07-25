@@ -5,10 +5,12 @@ package com.zysy.httpserver;
  * @Description:n
  * @Auther:
  * @version:1.0
- * @create 2019/7/24 19:48 24
+ * @create 2019/7/24 19:48 24ddddd
  */
 
+import com.zysy.os.servelt.LoginServlet;
 import jdk.management.cmm.SystemResourcePressureMXBean;
+import sun.rmi.runtime.Log;
 
 import java.io.*;
 import java.net.Socket;
@@ -41,10 +43,27 @@ public class HandlerRequest implements Runnable {
             if (requestURI.endsWith(".html") || requestURI.endsWith(".htm")){
                 //处理静态页面的方法。 找到了页面 怎么了响应回去？用输出流
                 responseStaticpPage(requestURI,out);
+            }else{
+                //不是一个静态页面类，说明是一个动态资源：java程序，业务处理类
+                //requestURI：/oa/login？usernname=xuli&password=111
+                //requestURI：/oa/login 无参数
+                String servletPath=requestURI;
+                System.out.println("servletPath= " +servletPath);
+                //判断serveletPath是否包含？号来确定是否有参数
+                if (servletPath.contains("?")) {
+                    servletPath= servletPath.split("[?]")[0];//取出/os/login是个正则表达 ？需要转义 [？] \\？两种方法
+                    System.out.println("servletPathURI= " +servletPath);
+                }
+                //找到路径，调用LoginServlet类的service方法
+                if ("/oa/login".equals(servletPath)){
+                    LoginServlet loginServlet=new LoginServlet();
+                    loginServlet.service();
+                }
+
             }
-            if (requestURI.endsWith(".jpg")|| requestURI.endsWith(".jepg")){
+/*            if (requestURI.endsWith(".jpg")|| requestURI.endsWith(".jepg")){
                 responseStaticpPicuter(requestURI,out);
-            }
+            }*/
             //强制刷新
             out.flush();
 
@@ -73,10 +92,10 @@ public class HandlerRequest implements Runnable {
  * @param requestURI 请求uri
  * @param out 响应流对象
  */
-    private void responseStaticpPicuter(String requestURI, PrintWriter out) {
+/*    private void responseStaticpPicuter(String requestURI, PrintWriter out) {
         System.out.println("处理图片");
 
-    }
+    }*/
 
     /**
  * 处理静态页面

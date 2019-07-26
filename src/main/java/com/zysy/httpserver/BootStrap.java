@@ -1,5 +1,8 @@
 package com.zysy.httpserver;
 
+import org.dom4j.DocumentException;
+import org.xml.sax.SAXException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,6 +35,8 @@ public class BootStrap {
         Socket clientSocket=null;
         BufferedReader br=null;
         try {
+            String[] webAppNames={"oa"};
+            WebParse.parser(webAppNames);
             int port = ServerParser.getPort();
             System.out.println("获取系统端口号:"+port);
             serverSocket = new ServerSocket(port);
@@ -48,7 +53,9 @@ public class BootStrap {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } finally {
             //关闭资源
 /*            if (br!=null) {
                 try {

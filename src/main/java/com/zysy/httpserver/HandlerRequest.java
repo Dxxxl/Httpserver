@@ -12,8 +12,10 @@ import com.zysy.os.servelt.LoginServlet;
 import jdk.management.cmm.SystemResourcePressureMXBean;
 import sun.rmi.runtime.Log;
 
+import javax.servlet.Servlet;
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 
 /**
  * 处理客户端请求,runnnable接口，重写run方法
@@ -44,32 +46,62 @@ public class HandlerRequest implements Runnable {
                 //处理静态页面的方法。 找到了页面 怎么了响应回去？用输出流
                 responseStaticpPage(requestURI,out);
             }else{
-                //不是一个静态页面类，说明是一个动态资源：java程序，业务处理类
+               //不是一个静态页面类，说明是一个动态资源：java程序，业务处理类
                 //requestURI：/oa/login？usernname=xuli&password=111
                 //requestURI：/oa/login 无参数
                 String servletPath=requestURI;
                 System.out.println("servletPath= " +servletPath);
                 //判断serveletPath是否包含？号来确定是否有参数
                 if (servletPath.contains("?")) {
-                    servletPath= servletPath.split("[?]")[0];//取出/os/login是个正则表达 ？需要转义 [？] \\？两种方法
+                    servletPath= servletPath.split("[?]")[0];//取出/oa/login是个正则表达 ？需要转义 [？] \\？两种方法
                     System.out.println("servletPathURI= " +servletPath);
                 }
                 //找到路径，调用LoginServlet类的service方法
-                if ("/oa/login".equals(servletPath)){
+/*                if ("/oa/login".equals(servletPath)){
                     LoginServlet loginServlet=new LoginServlet();
                     loginServlet.service();
+                }*/
+                //  获取应用名称：oa在uri里 /oa/login
+                String webAppName=servletPath.split("/")[1];
+                //获取servletMaps集合中的value->servletMap ->key:urlPattern value:servletClassName
+                Map<String,String>servletMap=WebParse.servletMaps.get(webAppName);
+                //获取servlet的请求路径:/login
+                String urlPattern=servletPath.substring(webAppName.length()+1);
+                //获取servlet完整的类名
+                String servletClassName=servletMap.get(urlPattern);
+                //判断该servelt业务处理类类
+                if (servletClassName !=null){
+                    //t通过反射机制创建该业务处理类
+                    Class c=Class.forName(servletClassName);
+                    Object obj=c.newInstance();
+                    //这个时候，服务器开发人员不知道如何调用servlet业务处理类里的方法？
+                    Servlet servlet= (Servlet) obj;
+                    servlet.service();
+                }else{
+                    //404找不到资源
+                    StringBuilder html=new StringBuilder();
+                    html.append("HTTP/1.1 404 NotFound\n");
+                    html.append("Content-Type:text/html;charset=utf-8\n\n");
+                    html.append("<html>");
+                    html.append("<head>");
+                    html.append("<title>404-错误</title>");
+                    html.append("<meta content='text/html;charset=utf-8'/>");
+                    html.append("</head>");
+                    html.append("<body>");
+                    html.append("<h1>404-Not Found</h1>");
+                    html.append("</body>");
+                    html.append("</html>");
+                    out.print(html);
+
                 }
 
             }
-/*            if (requestURI.endsWith(".jpg")|| requestURI.endsWith(".jepg")){
-                responseStaticpPicuter(requestURI,out);
-            }*/
             //强制刷新
             out.flush();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (br !=null)
             {
                 try {
@@ -86,16 +118,13 @@ public class HandlerRequest implements Runnable {
                 }
             }
         }
+
     }
 /**
  * 处理图片
  * @param requestURI 请求uri
  * @param out 响应流对象
  */
-/*    private void responseStaticpPicuter(String requestURI, PrintWriter out) {
-        System.out.println("处理图片");
-
-    }*/
 
     /**
  * 处理静态页面

@@ -24,6 +24,7 @@
 
     <modules>
         <module>hello</module>
+        <module>WebRoot</module>
     </modules>
 
     <!-- https://mvnrepository.com/artifact/dom4j/dom4j -->
@@ -38,6 +39,24 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jboss.arquillian.container/arquillian-container-spi -->
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+            <version>1.4.1.Final</version>
         </dependency>
 
     </dependencies>

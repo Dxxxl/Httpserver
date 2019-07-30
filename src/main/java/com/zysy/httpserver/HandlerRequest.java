@@ -62,21 +62,37 @@ public class HandlerRequest implements Runnable {
                     loginServlet.service();
                 }*/
                 //  获取应用名称：oa在uri里 /oa/login
-                String webAppName=servletPath.split("/")[1];
+                String webAppName = servletPath.split("/")[1];
                 //获取servletMaps集合中的value->servletMap ->key:urlPattern value:servletClassName
-                Map<String,String>servletMap=WebParse.servletMaps.get(webAppName);
+                Map<String,String>servletMap = WebParse.servletMaps.get(webAppName);
                 //获取servlet的请求路径:/login
-                String urlPattern=servletPath.substring(webAppName.length()+1);
+                String urlPattern = servletPath.substring(webAppName.length()+1);
                 //获取servlet完整的类名
-                String servletClassName=servletMap.get(urlPattern);
+                String servletClassName = servletMap.get(urlPattern);
                 //判断该servelt业务处理类类
-                if (servletClassName !=null){
-                    //t通过反射机制创建该业务处理类
-                    Class c=Class.forName(servletClassName);
-                    Object obj=c.newInstance();
-                    //这个时候，服务器开发人员不知道如何调用servlet业务处理类里的方法？
-                    Servlet servlet= (Servlet) obj;
-                    servlet.service();
+                if (servletClassName != null){
+                    //获取封装响应参数对象
+                    ResponseObject responseObject = new ResponseObject();
+                    responseObject.setWrite(out);
+                    //获取封装请求参数对象
+                    RequestObject requestObject = new RequestObject(requestURI);
+                    out.print("HTTP/1.1 200 OK\n");
+                    out.print("Content-Type:text/html;charset=utf-8\n\n");
+                    //创建servlet对象之前，先从缓存池中查找是否存在
+                    //1.如果有，拿来直接使用
+                    //2.如果没有 创建servlet对象，放到缓存池中
+                    Servlet servlet = ServletCache.get(urlPattern);
+                    if (servlet == null){
+                        //t通过反射机制创建该业务处理类
+                        Class c=Class.forName(servletClassName);
+                        Object obj=c.newInstance();
+                        //这个时候，servlet业务处理类里的方法？
+                         servlet = (Servlet) obj;
+                         //将创建好的Servlet对象放在缓存池中
+                        ServletCache.put(urlPattern,servlet);
+                    }
+                    System.out.println("servlet:"+servlet);
+                    servlet.service(requestObject,responseObject);
                 }else{
                     //404找不到资源
                     StringBuilder html=new StringBuilder();

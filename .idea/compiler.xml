@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="8">
       <module name="hello" target="6" />
+      <module name="WebRoot" target="6" />
     </bytecodeTargetLevel>
   </component>
 </project>

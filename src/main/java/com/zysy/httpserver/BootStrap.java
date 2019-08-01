@@ -36,10 +36,13 @@ public class BootStrap {
         BufferedReader br=null;
         try {
             String[] webAppNames={"oa"};
+            //在初始化的时候解析web.xml配置文件
             WebParse.parser(webAppNames);
+            //定义了一个获取端口号的
             int port = ServerParser.getPort();
             System.out.println("获取系统端口号:"+port);
             serverSocket = new ServerSocket(port);
+            //创建线程池
             while (true) {
                 //开始监听网络，此时程序处于等待状态，等待客户端的信息
                 clientSocket= serverSocket.accept();

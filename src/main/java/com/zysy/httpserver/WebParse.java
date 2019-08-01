@@ -53,7 +53,7 @@ public class WebParse {
 //      遍历servletNodes获取servlet-name和servlet-class值
         for(Element servletNode:servletNodes){
             Element servletNameElt= (Element) servletNode.selectSingleNode("servlet-name");
-            //如果下面出问题 则是上面一句代码的问题
+            //如果下面出问题 则是上面servletNode空
             String servletName=servletNameElt.getStringValue();
             //获取servlet-class节点元素对象
             Element servletClassElt= (Element) servletNode.selectSingleNode("servlet-class");

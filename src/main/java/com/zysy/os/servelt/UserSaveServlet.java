@@ -1,9 +1,14 @@
 package com.zysy.os.servelt;
 
+import com.mysql.cj.protocol.Resultset;
+import com.zysy.httpserver.GetDBConnection;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.Statement;
 
 /**
  * @Title:UserSaveServlet
@@ -25,7 +30,16 @@ public class UserSaveServlet implements Servlet {
             departments.append(departmentvalue).append(" ");
 
         }
-        //连接数据库执行保存操作
+           Connection conn;
+            Statement sql;
+            Resultset rs;
+            conn= GetDBConnection.connectoinDB("test","root","xuli");
+            if (conn==null)
+            {
+                System.out.println("连接数据库失败");
+            }else{
+                System.out.println("连接数据库成功");
+        }
 
         //将响应结果响应到浏览器上。
         PrintWriter out=response.getWrite();

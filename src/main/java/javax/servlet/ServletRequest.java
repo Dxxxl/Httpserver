@@ -10,10 +10,10 @@ package javax.servlet;
 public interface ServletRequest {
     /**
      * 通过参数的名字获取的参数值
-     * @param name
+     * @param key
      * @return
      */
-    String getParameter(String name);
+
 
     String getParameterValue(String key);
 
@@ -23,4 +23,6 @@ public interface ServletRequest {
      * @return
      */
     String[] getParameterValues(String name);
+
+
 }

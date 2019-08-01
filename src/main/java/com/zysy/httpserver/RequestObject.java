@@ -19,9 +19,9 @@ public class RequestObject implements ServletRequest {
     public RequestObject(String requestURI){
         //这里的requestURIAndData可能是:
         // /oa/save
-        // /oa/save?username='zhangsan'&password='123'
-        // /oa/save?username='zhangsan'&password='123'&interest=sport&interest=music
-        // /oa/save?username=&password=&interest=sport&interest=music
+        // /oa/save?username='zhangsan'&school='123'
+        // /oa/save?username='zhangsan'&school='123'&sex='man'
+        // /oa/save?username=&school=qinghua&sex="man"&department=data
         if (requestURI.contains("?")){
             String[] uriAndData=requestURI.split("[?]");
             if (uriAndData.length>1){
@@ -37,6 +37,7 @@ public class RequestObject implements ServletRequest {
                         //判断key值是否在parameterMap集合中存在
                         //1.如果存在，说明该参数为多选框
                         //2，如果不存在，说明是普通的标签
+                        parameterMap.containsKey(nameAndValueArr[0]);
                         if (parameterMap.containsKey(nameAndValueArr[0])){
                             //将之前多选框里的值取出来
                             String[] values=parameterMap.get(nameAndValueArr[0]);
@@ -72,20 +73,19 @@ public class RequestObject implements ServletRequest {
 
     }
 
-    @Override
-    public String getParameter(String name) {
-        return null;
-    }
+
 
     @Override
     public String getParameterValue(String key) {
         String[] value=parameterMap.get(key);
-        return (value!=null&& value.length!=0)?value[0]:null;
+        return (value != null && value.length!=0)?value[0]:null;
     }
 
     @Override
     public String[] getParameterValues(String key) {
         return  parameterMap.get(key);
     }
+
+
 }
 

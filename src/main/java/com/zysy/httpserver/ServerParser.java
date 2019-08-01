@@ -34,7 +34,7 @@ public class ServerParser {
             //获取port属性
             port = Integer.parseInt(connectorElt.attributeValue("port"));
         } catch (DocumentException e) {
-            e.printStackTrace();
+            e.printStackTrace();//log4j 运行时异常
         }
 
         return port;

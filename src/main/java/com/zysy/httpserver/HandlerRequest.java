@@ -8,14 +8,11 @@ package com.zysy.httpserver;
  * @create 2019/7/24 19:48 24ddddd
  */
 
-import com.zysy.os.servelt.LoginServlet;
-import jdk.management.cmm.SystemResourcePressureMXBean;
-import sun.rmi.runtime.Log;
-
 import javax.servlet.Servlet;
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * 处理客户端请求,runnnable接口，重写run方法
@@ -32,6 +29,8 @@ public class HandlerRequest implements Runnable {
         PrintWriter out=null;
         //处理客户端请求
         try {
+           /* Properties properties;
+            properties.entrySet()*/
              br=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             //打印线程名称
             System.out.println("httpserver thread "+Thread.currentThread().getName());
@@ -46,7 +45,7 @@ public class HandlerRequest implements Runnable {
                 //处理静态页面的方法。 找到了页面 怎么了响应回去？用输出流
                 responseStaticpPage(requestURI,out);
             }else{
-               //不是一个静态页面类，说明是一个动态资源：java程序，业务处理类
+               //不是一个静态页面类，说明是一个动态资源：java程序
                 //requestURI：/oa/login？usernname=xuli&password=111
                 //requestURI：/oa/login 无参数
                 String servletPath=requestURI;
@@ -64,6 +63,7 @@ public class HandlerRequest implements Runnable {
                 //  获取应用名称：oa在uri里 /oa/login
                 String webAppName = servletPath.split("/")[1];
                 //获取servletMaps集合中的value->servletMap ->key:urlPattern value:servletClassName
+                //WebParse.servletMaps里的形式是Map<string Map<string,string>>
                 Map<String,String>servletMap = WebParse.servletMaps.get(webAppName);
                 //获取servlet的请求路径:/login
                 String urlPattern = servletPath.substring(webAppName.length()+1);
@@ -88,7 +88,7 @@ public class HandlerRequest implements Runnable {
                         Object obj=c.newInstance();
                         //这个时候，servlet业务处理类里的方法？
                          servlet = (Servlet) obj;
-                         //将创建好的Servlet对象放在缓存池中
+                         //将创建好的Servlet对象放在缓存池中 urlpattern=/user/save
                         ServletCache.put(urlPattern,servlet);
                     }
                     System.out.println("servlet:"+servlet);
@@ -136,11 +136,6 @@ public class HandlerRequest implements Runnable {
         }
 
     }
-/**
- * 处理图片
- * @param requestURI 请求uri
- * @param out 响应流对象
- */
 
     /**
  * 处理静态页面

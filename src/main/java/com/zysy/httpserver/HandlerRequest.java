@@ -8,11 +8,16 @@ package com.zysy.httpserver;
  * @create 2019/7/24 19:48 24ddddd
  */
 
+
+
 import javax.servlet.Servlet;
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
-import java.util.Properties;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 
 /**
  * 处理客户端请求,runnnable接口，重写run方法
@@ -23,8 +28,13 @@ public class HandlerRequest implements Runnable {
     public HandlerRequest(Socket clientSocket){
         this.clientSocket=clientSocket;
     }
+    private  static Logger logger=Logger.getLogger(HandlerRequest.class);
+
     @Override
     public void run(){
+
+      //  BasicConfigurator.configure();
+       logger.debug("assddczx");
         BufferedReader br=null;
         PrintWriter out=null;
         //处理客户端请求
@@ -118,6 +128,8 @@ public class HandlerRequest implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+
+
             if (br !=null)
             {
                 try {
@@ -133,6 +145,7 @@ public class HandlerRequest implements Runnable {
                     e.printStackTrace();
                 }
             }
+
         }
 
     }
